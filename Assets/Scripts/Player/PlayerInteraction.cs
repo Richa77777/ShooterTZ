@@ -22,10 +22,11 @@ public class PlayerInteraction : MonoBehaviour
     {
         RaycastHit hit;
         Ray ray = new Ray(_rayOrigin.position, _rayOrigin.forward);
-        
+
         if (Physics.Raycast(ray, out hit, _interactionRange))
         {
             InteractableObject interactable = hit.collider.GetComponent<InteractableObject>();
+
             if (interactable != null)
             {
                 _interactionText.text = "Press E to interact with " + interactable.gameObject.name;
@@ -50,10 +51,9 @@ public class PlayerInteraction : MonoBehaviour
         if (Physics.Raycast(ray, out hit, _interactionRange))
         {
             InteractableObject interactable = hit.collider.GetComponent<InteractableObject>();
-            if (interactable != null)
-            {
+
+            if (interactable != null) 
                 interactable.Interact(hit.collider.gameObject);
-            }
         }
     }
 }
