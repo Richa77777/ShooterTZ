@@ -116,18 +116,20 @@ public class Enemy : MonoBehaviour, IDamagable
         if (!_isShooting)
         {
             _isShooting = true;
-            StartCoroutine(StartShooting());
+            StartCoroutine(StartShootingWithCooldown());
         }
     }
 
-    private IEnumerator StartShooting()
+    private IEnumerator StartShootingWithCooldown()
     {
-        float delay = Random.Range(_attackDelayRange.x, _attackDelayRange.y);
-        yield return new WaitForSeconds(delay);
-
         while (_state == State.Attacking && !IsObstacleBetween() && _currentAmmo > 0)
         {
+            float delay = Random.Range(_attackDelayRange.x, _attackDelayRange.y);
+
+            yield return new WaitForSeconds(delay);
+
             bool isMissed = Random.value < _missChance;
+
             if (isMissed)
             {
                 Debug.Log("Enemy missed the shot!");
@@ -139,6 +141,12 @@ public class Enemy : MonoBehaviour, IDamagable
             }
 
             _currentAmmo--;
+            _canAttack = false;
+
+            yield return new WaitForSeconds(_attackCooldown);
+
+            _canAttack = true;
+
             yield return new WaitForSeconds(_fireRate);
         }
 
@@ -225,7 +233,7 @@ public class Enemy : MonoBehaviour, IDamagable
         _state = State.Patrolling;
         _agent.isStopped = true;
 
-        EventsHandler.Instance.OnEnemyKilled?.Invoke();
+        EventsHandler.InvokeOnEnemyKilled();
         
         Destroy(gameObject);
     }

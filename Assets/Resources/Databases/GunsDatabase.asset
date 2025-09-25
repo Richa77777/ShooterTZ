@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0d4b69536f3a446f6baddd72cd09914f, type: 3}
-  m_Name: Guns Database
+  m_Name: GunsDatabase
   m_EditorClassIdentifier: 
   _guns:
   - _id: 0

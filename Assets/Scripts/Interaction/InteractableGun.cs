@@ -8,7 +8,7 @@ public class InteractableGun : InteractableObject
     public
         override void Interact(GameObject obj)
     {
-        EventsHandler.Instance.OnGunPickedUp?.Invoke(_gunID);
+        EventsHandler.InvokeOnGunPickedUp(_gunID);
         Debug.Log($"Gun with ID {_gunID} picked up!");
         base.Interact(obj);
     }

@@ -1,137 +1,116 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
-[RequireComponent(typeof(InventoryPersistence))]
-public class Inventory : MonoBehaviour
+public class Inventory
 {
-    [SerializeField] private GunSlot[] _gunSlots = new GunSlot[3];
-    [SerializeField] private ExtraItemSlot[] _extraItemSlots = new ExtraItemSlot[2];
+    private List<int> _guns = new List<int>();
+    private List<ExtraItem> _extraItems = new List<ExtraItem>();
 
-    private int _currentSelectedSlot = 1;
-    private GunsDatabase _gunsDatabase;
+    public int InventorySize { get; private set; } = 3;
+    public IReadOnlyList<int> Guns => _guns;
 
-    public event Action<int /* Weapon ID */> OnGunSelected;
-    public event Action<ItemType> OnExtraItemUsed;
 
-    public event Action OnGunAdded;
-    public event Action OnGunRemoved;
-    public event Action OnExtraItemAdded;
-    public event Action OnExtraItemRemoved;
-
-    public GunSlot[] GunSlots => _gunSlots;
-    public ExtraItemSlot[] ExtraItemSlots => _extraItemSlots;
-    
-    public void Initialize(GunsDatabase gunsDatabase)
+    public Inventory(int inventorySize = 3)
     {
-        _gunsDatabase = gunsDatabase;
+        InventorySize = Mathf.Max(0, inventorySize);
+    }
 
-        foreach (GunSlot gunSlot in _gunSlots)
+    #region Gun Methods
+
+    public void AddGun(int? gunId)
+    {
+        if (!_guns.Contains(gunId.Value) && _guns.Count < InventorySize)
         {
-            gunSlot.Initialize(_gunsDatabase);
+            _guns.Add(gunId.Value);
+            EventsHandler.InvokeOnInventoryChanged();
         }
-        
-        GetComponent<InventoryPersistence>().LoadInventory();
-        SelectGunSlot(1);
     }
 
-    private void OnEnable()
+    public void RemoveGun(int gunId)
     {
-        if (EventsHandler.Instance == null) return;
-
-        EventsHandler.Instance.OnGunPickedUp += AddGun;
-        EventsHandler.Instance.OnItemPickedUp += AddExtraItem;
-    }
-
-    private void OnDisable()
-    {
-        if (EventsHandler.Instance == null) return;
-        
-        EventsHandler.Instance.OnGunPickedUp -= AddGun;
-        EventsHandler.Instance.OnItemPickedUp -= AddExtraItem;
-    }
-
-    private void Update()
-    {
-        for (int i = 1; i <= _gunSlots.Length; i++)
+        if (_guns.Remove(gunId))
         {
-            if (Input.GetKeyDown(KeyCode.Alpha0 + i))
+            EventsHandler.InvokeOnInventoryChanged();
+        }
+    }
+
+    public int? GetGunBySlotIndex(int slotIndex)
+    {
+        if (slotIndex < 0 || slotIndex >= _guns.Count) return null;
+
+        return _guns[slotIndex];
+    }
+
+    public int? GetGunSlotIndexById(int gunId)
+    {
+        for (int i = 0; i < _guns.Count; i++)
+        {
+            if (_guns[i] == gunId)
             {
-                SelectGunSlot(i);
+                return i;
             }
         }
 
-        HandleItemUse(KeyCode.Q, ItemType.Medkit);
-        HandleItemUse(KeyCode.F, ItemType.AmmoPack);
+        return null;
     }
 
-    private void HandleItemUse(KeyCode key, ItemType itemType)
-    {
-        if (Input.GetKeyDown(key) && CheckExtraItemAvailable(itemType))
-        {
-            RemoveExtraItem(itemType);
-            OnExtraItemUsed?.Invoke(itemType);
-        }
-    }
-    
-    #region Gun
-    
-    public void AddGun(int gunId)
-    {
-        if (_gunSlots.Any(gunSlot => gunSlot.CurrentGunId == gunId))
-        {
-            return;
-        }
-        
-        foreach (GunSlot gunSlot in _gunSlots)
-        {
-            if (gunSlot.CurrentGunId == -1)
-            {
-                gunSlot.SetGun(gunId);
-                break;
-            }
-        }
-        
-        SelectGunSlot(_currentSelectedSlot);
-        OnGunAdded?.Invoke();
-    }
-
-    public void RemoveGun(int slotIndex)
-    {
-        _gunSlots[slotIndex].RemoveGun();
-        SelectGunSlot(_currentSelectedSlot);
-        OnGunRemoved?.Invoke();
-    }
-
-    private void SelectGunSlot(int slotIndex)
-    {
-        if (slotIndex > _gunSlots.Length || slotIndex < 1) return;
-        _currentSelectedSlot = slotIndex;
-        
-        OnGunSelected?.Invoke(_gunSlots[slotIndex - 1].CurrentGunId);
-    }
-    
     #endregion
 
-    #region Extra
-    private void AddExtraItem(ItemType itemType)
+    #region Extra Item Methods
+
+    public void AddExtraItem(ItemType itemType, int count)
     {
-        _extraItemSlots.First(e => e.ItemType == itemType)?.AddItem(1);
-        OnGunAdded?.Invoke();
+        int? extraItemIndex = GetExtraItemIndex(itemType);
+
+        if (extraItemIndex == null) _extraItems.Add(new ExtraItem(itemType, Mathf.Clamp(count, 0, int.MaxValue)));
+        else _extraItems[extraItemIndex.Value].AddCount(count);
+
+        if (count > 0)
+            EventsHandler.InvokeOnInventoryChanged();
     }
-    
-    public void RemoveExtraItem(ItemType itemType)
+
+    public bool TryRemoveExtraItem(ItemType itemType, int count)
     {
-        _extraItemSlots.First(e => e.ItemType == itemType)?.RemoveItem(1);
-        OnExtraItemRemoved?.Invoke();
+        int? extraItemIndex = GetExtraItemIndex(itemType);
+
+        if (extraItemIndex != null)
+        {
+            if (_extraItems[extraItemIndex.Value].SubtractCount(Mathf.Abs(count)))
+            {
+                EventsHandler.InvokeOnInventoryChanged();
+                return true;
+            }
+        }
+
+        return false;
     }
-    
-    public bool CheckExtraItemAvailable(ItemType itemType)
+
+    public int? GetExtraItemIndex(ItemType itemType)
     {
-        return _extraItemSlots.First(e => e.ItemType == itemType).ItemCount > 0;
+        for (int i = 0; i < _extraItems.Count; i++)
+        {
+            if (_extraItems[i].ItemType == itemType)
+            {
+                return i;
+            }
+        }
+
+        return null;
     }
-    
+
+    public int? GetExtraItemCount(ItemType itemType)
+    {
+        for (int i = 0; i < _extraItems.Count; i++)
+        {
+            if (_extraItems[i].ItemType == itemType)
+            {
+                return _extraItems[i].Count;
+            }
+        }
+
+        return null;
+    }
+
     #endregion
 }

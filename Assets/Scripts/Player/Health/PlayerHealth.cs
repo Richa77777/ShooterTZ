@@ -5,7 +5,6 @@ using UnityEngine;
 public class PlayerHealth : MonoBehaviour, IDamagable
 {
     [SerializeField] private int _maxHealth = 100;
-    [SerializeField] private Inventory _inventory;
 
     private HealthDisplay _healthDisplay;
 
@@ -21,12 +20,12 @@ public class PlayerHealth : MonoBehaviour, IDamagable
 
     private void OnEnable()
     {
-        _inventory.OnExtraItemUsed += AddHealthMedkit;
+        EventsHandler.OnExtraItemUsed += AddHealthMedkit;
     }
 
     private void OnDisable()
     {
-        _inventory.OnExtraItemUsed -= AddHealthMedkit;
+        EventsHandler.OnExtraItemUsed -= AddHealthMedkit;
     }
 
     public void AddHealthMedkit(ItemType itemType)
@@ -56,7 +55,7 @@ public class PlayerHealth : MonoBehaviour, IDamagable
 
     public void Die()
     {
-        EventsHandler.Instance.OnPlayerDied?.Invoke();
+        EventsHandler.InvokeOnPlayerDied();
         Debug.Log("Player Died");
     }
 }

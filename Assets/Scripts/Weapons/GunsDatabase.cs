@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "GunsDatabase", menuName = "Game/Guns Database")]
@@ -13,7 +12,7 @@ public class GunsDatabase : ScriptableObject
     {
         GenerateUniqueIDs();
     }
-    
+
     private void GenerateUniqueIDs()
     {
         HashSet<int> usedIDs = new();
@@ -45,23 +44,38 @@ public class GunsDatabase : ScriptableObject
 
     public GunEntry GetGunEntryById(int id)
     {
-        return _guns.FirstOrDefault(g => g.ID == id);
+        for (int i = 0; i < _guns.Count; i++)
+        {
+            if (_guns[i].ID == id)
+                return _guns[i];
+        }
+        return null;
     }
-    
+
     public Gun GetGunPrefabById(int id)
     {
-        return _guns.FirstOrDefault(g => g.ID == id)?.GunPrefab;
+        for (int i = 0; i < _guns.Count; i++)
+        {
+            if (_guns[i].ID == id)
+                return _guns[i].GunPrefab;
+        }
+        return null;
     }
 
     public int GetIdByPrefab(Gun gunPrefab)
     {
-        GunEntry gunEntry = _guns.Find(g => g.GunPrefab == gunPrefab);
-        return gunEntry?.ID ?? -1;
+        for (int i = 0; i < _guns.Count; i++)
+        {
+            if (_guns[i].GunPrefab == gunPrefab)
+                return _guns[i].ID;
+        }
+        return -1;
     }
 
     public bool EqualsGun(Gun gun1, Gun gun2)
     {
-        return gun1 != null && gun2 != null && gun1.ID == gun2.ID;
+        if (gun1 == null || gun2 == null) return false;
+        return gun1.ID == gun2.ID;
     }
 }
 

@@ -22,14 +22,16 @@ public class Gun : MonoBehaviour
     private HandRecoil _handRecoil;
     private Animator _handAnimator;
 
+    // Other
     private Camera _camera;
     private Coroutine _reloadCor;
-
     private bool _isInitialized = false;
 
+    // Events
     public event Action OnShot;
     public event Action OnReloadEnd;
 
+    // Fields
     [field: Space(20f), SerializeField] public int AmmoPackRefillAmount { get; private set; }
     public int ID { get; private set; } = -1;
     public int CurrentMaxAmmo { get; private set; }
@@ -63,18 +65,18 @@ public class Gun : MonoBehaviour
 
     private void LoadAmmoState()
     {
-        int savedAmmo = PlayerPrefs.GetInt($"Gun_{ID}_Ammo", _magazineCapacity);
-        int savedMaxAmmo = PlayerPrefs.GetInt($"Gun_{ID}_MaxAmmo", _maxAmmo);
+        //int savedAmmo = PlayerPrefs.GetInt($"Gun_{ID}_Ammo", _magazineCapacity);
+        //int savedMaxAmmo = PlayerPrefs.GetInt($"Gun_{ID}_MaxAmmo", _maxAmmo);
 
-        CurrentAmmo = savedAmmo;
-        CurrentMaxAmmo = savedMaxAmmo;
+        //CurrentAmmo = savedAmmo;
+        //CurrentMaxAmmo = savedMaxAmmo;
     }
 
     private void SaveAmmoState()
     {
-        PlayerPrefs.SetInt($"Gun_{ID}_Ammo", CurrentAmmo);
-        PlayerPrefs.SetInt($"Gun_{ID}_MaxAmmo", CurrentMaxAmmo);
-        PlayerPrefs.Save();
+        //PlayerPrefs.SetInt($"Gun_{ID}_Ammo", CurrentAmmo);
+        //PlayerPrefs.SetInt($"Gun_{ID}_MaxAmmo", CurrentMaxAmmo);
+        //PlayerPrefs.Save();
     }
 
     public void AddAmmo(int count)

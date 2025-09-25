@@ -11,12 +11,12 @@ public class EnemiesCounter : MonoBehaviour
 
     private void OnEnable()
     {
-        EventsHandler.Instance.OnEnemyKilled += SubtractEnemyCount;
+        EventsHandler.OnEnemyKilled += SubtractEnemyCount;
     }
 
     private void OnDisable()
     {
-        EventsHandler.Instance.OnEnemyKilled -= SubtractEnemyCount;
+        EventsHandler.OnEnemyKilled -= SubtractEnemyCount;
     }
 
     private void GetAllEnemiesFromScene()
@@ -30,7 +30,7 @@ public class EnemiesCounter : MonoBehaviour
 
         if (_enemyCount <= 0)
         {
-            EventsHandler.Instance.OnAllEnemiesKilled?.Invoke();
+            EventsHandler.InvokeOnAllEnemiesKilled();
         }
     }
 }

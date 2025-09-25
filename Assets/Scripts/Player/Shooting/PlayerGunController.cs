@@ -7,14 +7,8 @@ public class PlayerGunController : MonoBehaviour
     [SerializeField] private Gun _startGunPrefab;
     [SerializeField] private LayerMask _hitLayerMask;
 
-    [Header("Guns Database")]
-    [SerializeField] private GunsDatabase _gunsDatabase;
-
     [Header("Guns Pool")]
     [SerializeField] private GunsPool _gunsPool;
-
-    [Space(10f), Header("Inventory")]
-    [SerializeField] private Inventory _inventory;
 
     [Header("Hand Components")]
     [SerializeField] private HandRecoil _handRecoil;
@@ -22,38 +16,42 @@ public class PlayerGunController : MonoBehaviour
 
     private Gun _currentGun;
     private AmmoDisplay _ammoDisplay;
-    
+    private GunsDatabase _gunsDatabase;
+
     private void Awake()
     {
+        _gunsDatabase = Resources.Load<GunsDatabase>("Databases/GunsDatabase");
         _ammoDisplay = GetComponent<AmmoDisplay>();
-        
         _gunsPool.Initialize(_gunsDatabase, _handRecoil, _handAnimator, _hitLayerMask);
-        _inventory.Initialize(_gunsDatabase);
+
+        AddStartGun();
     }
 
     private void OnEnable()
     {
-        _inventory.OnGunSelected += SetGun;
-        _inventory.OnExtraItemUsed += AddAmmo;
-        AddStartGun();
+        EventsHandler.OnGunSelected += SetGun;
+        EventsHandler.OnExtraItemUsed += AddAmmo;
     }
 
     private void OnDisable()
     {
-        _inventory.OnGunSelected -= SetGun;
-        _inventory.OnExtraItemUsed -= AddAmmo;
+        EventsHandler.OnGunSelected -= SetGun;
+        EventsHandler.OnExtraItemUsed -= AddAmmo;
     }
-    
 
     private void AddStartGun()
     {
         if (_startGunPrefab != null)
         {
-            _inventory.AddGun(_gunsDatabase.GetIdByPrefab(_startGunPrefab));
+            int startGunID = _gunsDatabase.GetIdByPrefab(_startGunPrefab);
+
+            EventsHandler.InvokeOnGunPickedUp(startGunID);
             _startGunPrefab = null;
+
+            SetGun(startGunID);
         }
     }
-    
+
     private void SetGun(int gunID)
     {
         if (_currentGun != null)
@@ -68,9 +66,9 @@ public class PlayerGunController : MonoBehaviour
         // New Gun
         _currentGun = _gunsPool.GetGunFromPool(gunID);
         if (_currentGun == null) return;
-        
+
         _currentGun.gameObject.SetActive(true);
-        
+
         _currentGun.OnReloadEnd += UpdateAmmoCounter;
         _currentGun.OnShot += UpdateAmmoCounter;
 

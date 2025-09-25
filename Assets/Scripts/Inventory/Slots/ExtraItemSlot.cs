@@ -1,40 +1,18 @@
-using System;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
-public class ExtraItemSlot : MonoBehaviour
+namespace UIElements
 {
-    [SerializeField] private TextMeshProUGUI _countText;
-    
-    [field: SerializeField] public ItemType ItemType { get; private set; }
-    public int ItemCount { get; private set; }
-
-    private void Awake()
+    public class ExtraItemSlot : MonoBehaviour
     {
-        UpdateCountText();
-    }
+        [SerializeField] private TextMeshProUGUI _countText;
+        [SerializeField] private string _itemTypeString;
 
-    public void AddItem(int count)
-    {
-        ItemCount += count;
-        UpdateCountText();
-    }
-    
-    public void RemoveItem(int count)
-    {
-        ItemCount -= count;
-        UpdateCountText();
-    }
+        public ItemType ItemType => System.Enum.Parse<ItemType>(_itemTypeString);
 
-    private void UpdateCountText()
-    {
-        _countText.text = ItemCount.ToString();
+        public void UpdateCountText(string countText)
+        {
+            _countText.text = countText;
+        }
     }
-}
-
-public enum ItemType
-{
-    Medkit,
-    AmmoPack
 }

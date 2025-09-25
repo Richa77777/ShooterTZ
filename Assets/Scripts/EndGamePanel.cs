@@ -10,17 +10,14 @@ public class EndGamePanel : MonoBehaviour
     
     private void OnEnable()
     {
-        if (EventsHandler.Instance == null) return;
-        EventsHandler.Instance.OnAllEnemiesKilled += Win;
-        EventsHandler.Instance.OnPlayerDied += Lose;
+        EventsHandler.OnAllEnemiesKilled += Win;
+        EventsHandler.OnPlayerDied += Lose;
     }
 
     private void OnDisable()
     {
-        if (EventsHandler.Instance == null) return;
-
-        EventsHandler.Instance.OnAllEnemiesKilled -= Win;
-        EventsHandler.Instance.OnPlayerDied -= Lose;
+        EventsHandler.OnAllEnemiesKilled -= Win;
+        EventsHandler.OnPlayerDied -= Lose;
     }
 
     private void Win()
@@ -47,8 +44,6 @@ public class EndGamePanel : MonoBehaviour
         else if (status == GameEndStatus.Lose)
         {
             _endText.text = "You Lose!";
-            PlayerPrefs.DeleteAll();
-            PlayerPrefs.Save();
         }
         
         Time.timeScale = 0f;
