@@ -12,8 +12,10 @@ public class InventoryController : MonoBehaviour
 
     private void Awake()
     {
-        _inventory = new Inventory();
         _gunsDatabase = Resources.Load<GunsDatabase>("Databases/GunsDatabase");
+
+        _inventory = new Inventory();
+        LoadInventory();
     }
 
     private void OnEnable()
@@ -21,6 +23,7 @@ public class InventoryController : MonoBehaviour
         EventsHandler.OnGunPickedUp += OnGunPickedUp;
         EventsHandler.OnItemPickedUp += OnItemPickedUp;
         EventsHandler.OnExtraItemUsed += OnExtraItemUsed;
+        EventsHandler.OnInventoryChanged += SaveInventory;
     }
 
     private void OnDisable()
@@ -28,6 +31,7 @@ public class InventoryController : MonoBehaviour
         EventsHandler.OnGunPickedUp -= OnGunPickedUp;
         EventsHandler.OnItemPickedUp -= OnItemPickedUp;
         EventsHandler.OnExtraItemUsed -= OnExtraItemUsed;
+        EventsHandler.OnInventoryChanged -= SaveInventory;
     }
 
     private void Update()
@@ -52,6 +56,23 @@ public class InventoryController : MonoBehaviour
                 EventsHandler.InvokeOnExtraItemUsed(itemType);
         }
     }
+
+    #region Save/Load Methods
+
+    private void SaveInventory()
+    {
+        InventorySaveLoad.SaveInventory(_inventory);
+    }
+
+    private void LoadInventory()
+    {
+        InventorySaveLoad.LoadInventory(_inventory);
+
+        DisplayAllGuns();
+        DisplayAllExtraItems();
+    }
+
+    #endregion
 
     #region Gun Methods
 
@@ -95,21 +116,51 @@ public class InventoryController : MonoBehaviour
 
     #region UI Methods
 
+    #region Events
     private void OnGunPickedUp(int? gunID)
     {
         AddGun(gunID);
-        _inventoryView.SetGunSlotUI(_inventory.GetGunSlotIndexById(gunID.Value).Value, _gunsDatabase.GetGunEntryById(gunID.Value).Icon);
+        UpdateGunSlotUI(gunID.Value);
     }
 
     private void OnItemPickedUp(ItemType itemType, int value)
     {
         AddExtraItem(itemType, value);
-        _inventoryView.SetExtraItemSlotUI(itemType, _inventory.GetExtraItemCount(itemType).Value.ToString());
+        UpdateExtraItemUI(itemType);
     }
 
     private void OnExtraItemUsed(ItemType itemType)
     {
-        _inventoryView.SetExtraItemSlotUI(itemType, _inventory.GetExtraItemCount(itemType).Value.ToString());
+        UpdateExtraItemUI(itemType);
+    }
+
+    #endregion
+
+    private void UpdateGunSlotUI(int gunID)
+    {
+        int? slotIndex = _inventory.GetGunSlotIndexById(gunID);
+        if (!slotIndex.HasValue) return;
+
+        var gunEntry = _gunsDatabase.GetGunEntryById(gunID);
+        _inventoryView.SetGunSlotUI(slotIndex.Value, gunEntry.Icon);
+    }
+
+    private void UpdateExtraItemUI(ItemType itemType)
+    {
+        int? count = _inventory.GetExtraItemCount(itemType);
+        _inventoryView.SetExtraItemSlotUI(itemType, count?.ToString() ?? "0");
+    }
+
+    private void DisplayAllGuns()
+    {
+        foreach (int gunID in _inventory.Guns)
+            UpdateGunSlotUI(gunID);
+    }
+
+    private void DisplayAllExtraItems()
+    {
+        foreach (var extraItem in _inventory.ExtraItems)
+            UpdateExtraItemUI(extraItem.ItemType);
     }
 
     #endregion

@@ -9,6 +9,7 @@ public class Inventory
 
     public int InventorySize { get; private set; } = 3;
     public IReadOnlyList<int> Guns => _guns;
+    public IReadOnlyList<ExtraItem> ExtraItems => _extraItems;
 
 
     public Inventory(int inventorySize = 3)
@@ -110,6 +111,22 @@ public class Inventory
         }
 
         return null;
+    }
+
+    #endregion
+
+    #region Utils
+
+    public List<ExtraItem> GetAllExtraItems()
+    {
+        return new List<ExtraItem>(_extraItems);
+    }
+
+    public void Clear()
+    {
+        _guns.Clear();
+        _extraItems.Clear();
+        EventsHandler.InvokeOnInventoryChanged();
     }
 
     #endregion
