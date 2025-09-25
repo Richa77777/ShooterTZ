@@ -46,8 +46,6 @@ public class Gun : MonoBehaviour
         _handRecoil = handRecoil;
         _handAnimator = handAnimator;
         _hitLayerMask = hitLayerMask;
-
-        LoadAmmoState();
     }
 
     private void Awake()
@@ -63,26 +61,9 @@ public class Gun : MonoBehaviour
         _reloadCor = null;
     }
 
-    private void LoadAmmoState()
-    {
-        //int savedAmmo = PlayerPrefs.GetInt($"Gun_{ID}_Ammo", _magazineCapacity);
-        //int savedMaxAmmo = PlayerPrefs.GetInt($"Gun_{ID}_MaxAmmo", _maxAmmo);
-
-        //CurrentAmmo = savedAmmo;
-        //CurrentMaxAmmo = savedMaxAmmo;
-    }
-
-    private void SaveAmmoState()
-    {
-        //PlayerPrefs.SetInt($"Gun_{ID}_Ammo", CurrentAmmo);
-        //PlayerPrefs.SetInt($"Gun_{ID}_MaxAmmo", CurrentMaxAmmo);
-        //PlayerPrefs.Save();
-    }
-
     public void AddAmmo(int count)
     {
         CurrentMaxAmmo = Mathf.Clamp(CurrentMaxAmmo + count, 0, _maxAmmo);
-        SaveAmmoState();
     }
 
     protected virtual void Update()
@@ -104,7 +85,6 @@ public class Gun : MonoBehaviour
         OnShot?.Invoke();
 
         if (CurrentAmmo <= 0) ReloadGun();
-        SaveAmmoState();
     }
 
     private void CheckShotHit()
@@ -155,7 +135,5 @@ public class Gun : MonoBehaviour
         OnReloadEnd?.Invoke();
 
         _reloadCor = null;
-
-        SaveAmmoState();
     }
 }
