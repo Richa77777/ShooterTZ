@@ -573,7 +573,7 @@ PrefabInstance:
     - target: {fileID: 2869066599482460942, guid: 8f1ff2461ab864bcf8a242f0f78ab2a6,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.0500002
+      value: 1.0360001
       objectReference: {fileID: 0}
     - target: {fileID: 2869066599482460942, guid: 8f1ff2461ab864bcf8a242f0f78ab2a6,
         type: 3}
@@ -4552,7 +4552,7 @@ PrefabInstance:
     - target: {fileID: 5074410949034572385, guid: b5214f5aa53784624bfc1bc0b0f12529,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.1499997
+      value: 1.1359997
       objectReference: {fileID: 0}
     - target: {fileID: 5074410949034572385, guid: b5214f5aa53784624bfc1bc0b0f12529,
         type: 3}
@@ -6756,7 +6756,7 @@ GameObject:
   - component: {fileID: 4920112095806423039}
   - component: {fileID: 8350174796550315888}
   - component: {fileID: 8350174796550315889}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Pistol
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6942,7 +6942,7 @@ Transform:
   m_GameObject: {fileID: 7270664450578085333}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: 11.862, y: 1.108, z: 4.231}
+  m_LocalPosition: {x: 11.862, y: 1.029, z: 4.231}
   m_LocalScale: {x: 0.20000002, y: 0.20000002, z: 0.20000002}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -6961,7 +6961,7 @@ GameObject:
   - component: {fileID: 8021272733187967474}
   - component: {fileID: 8810151276102520811}
   - component: {fileID: 8810151276102520812}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Shotgun
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7099,7 +7099,7 @@ Transform:
   m_GameObject: {fileID: 3713603554958709250}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: 11.911, y: 1.105, z: 2.988}
+  m_LocalPosition: {x: 11.911, y: 1.026, z: 2.988}
   m_LocalScale: {x: 0.35, y: 0.35, z: 0.35}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -7152,7 +7152,7 @@ GameObject:
   - component: {fileID: 2221195413660368831}
   - component: {fileID: 9209320262523312766}
   - component: {fileID: 9209320262523312767}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: SMG
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7210,7 +7210,7 @@ Transform:
   m_GameObject: {fileID: 8771362800398070550}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: 12.101339, y: 1.096, z: 3.3529093}
+  m_LocalPosition: {x: 12.101339, y: 1.017, z: 3.3529093}
   m_LocalScale: {x: 0.24999999, y: 0.24999999, z: 0.24999999}
   m_ConstrainProportionsScale: 1
   m_Children: []
